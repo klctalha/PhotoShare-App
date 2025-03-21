@@ -75,10 +75,10 @@ class FeedFragment : Fragment(),PopupMenu.OnMenuItemClickListener {
                     val comment = document.getString("comment") ?: "Henüz Yorum Yapılmamış"
                     val email = document.getString("email") ?: "Kullanıcı Bilgisi Yok"
                     val downloadUrl = document.getString("downloadUrl") ?: ""
-                    val likes = document.getLong("likes")?.toInt() ?: 0
+                    val likee = document.getLong("likes")?.toInt() ?: 0
 
 
-                    val post = Post(email, comment, downloadUrl,likes)
+                    val post = Post(email, comment, downloadUrl,likee)
                     postList.add(post)
                 }
 
