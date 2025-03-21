@@ -61,36 +61,36 @@ class FeedFragment : Fragment(),PopupMenu.OnMenuItemClickListener {
     }
 
     private fun fireStoreVerileriAl() {
-        db.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener { value, error ->
-            if (error != null) {
-                Toast.makeText(requireContext(),"Veriler yüklenmedi: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
-                return@addSnapshotListener
-            }
-
-            if (value != null && !value.isEmpty) {
-                postList.clear()
-                val documents = value.documents
-
-                for (document in documents) {
-                    val comment = document.getString("comment") ?: "Henüz Yorum Yapılmamış"
-                    val email = document.getString("email") ?: "Kullanıcı Bilgisi Yok"
-                    val downloadUrl = document.getString("downloadUrl") ?: ""
-                    val likee = document.getLong("likes")?.toInt() ?: 0
-
-
-                    val post = Post(email, comment, downloadUrl,likee)
-                    postList.add(post)
+        db.collection("Posts").orderBy("date", Query.Direction.DESCENDING)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    Toast.makeText(requireContext(), "Veriler yüklenmedi: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
                 }
 
-                adapter?.notifyDataSetChanged()
+                value?.let {
+                    postList.clear()
+                    for (document in it.documents) {
+                        val post = documentToPost(document)
+                        postList.add(post)
+                    }
+                    adapter?.notifyDataSetChanged()
+                }
             }
-        }
     }
 
+    private fun documentToPost(document: com.google.firebase.firestore.DocumentSnapshot): Post {
+        val comment = document.getString("comment") ?: "Henüz Yorum Yapılmamış"
+        val email = document.getString("email") ?: "Kullanıcı Bilgisi Yok"
+        val downloadUrl = document.getString("downloadUrl") ?: ""
+        val likes = document.getLong("likes")?.toInt() ?: 0
+        return Post(email, comment, downloadUrl, likes)
+    }
 
     fun menuTiklandi(view:View){
         popup.show()
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
