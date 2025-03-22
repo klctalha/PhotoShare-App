@@ -70,6 +70,7 @@ class FeedFragment : Fragment(),PopupMenu.OnMenuItemClickListener {
 
                 value?.let {
                     postList.clear()
+
                     for (document in it.documents) {
                         val post = documentToPost(document)
                         postList.add(post)
